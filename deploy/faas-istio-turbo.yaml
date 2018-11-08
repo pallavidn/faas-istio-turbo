@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: faas-istio-turbo-pdn
+  labels:
+    app: faas-istio-turbo-pdn
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: faas-istio-turbo-pdn
+    spec:
+      serviceAccount: turbo-user
+      containers:
+        - name: faas-istio-turbo-pdn
+          # Replace the image with desired version
+          image: pallavidebnath/faasistioturbo:v1
+          imagePullPolicy: Always
+          args:
+            - --turboconfig=/etc/faasistioturbo/turbo.config
+            - --v=3
+          volumeMounts:
+          - name: faas-istio-turbo-config
+            mountPath: /etc/faasistioturbo
+            readOnly: true
+      volumes:
+      - name: faas-istio-turbo-config
+        configMap:
+          name: faas-istio-turbo-config-pdn
+      restartPolicy: Always
